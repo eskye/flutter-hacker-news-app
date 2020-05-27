@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'src/article.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Hacker News App'),
     );
   }
 }
@@ -35,9 +36,37 @@ class _MyHomePageState extends State<MyHomePage> {
 
         title: Text(widget.title),
       ),
-      body: new Column(
+      body: new ListView(
           children: _articles.map(_buildItem).toList(),
         ),
     );
+  }
+
+  Widget _buildItem(Article article) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ExpansionTile(
+          title: new Text(article.text, style: TextStyle(fontSize: 24.0),),
+          children: <Widget>[
+             Row(
+               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+               children: <Widget>[
+                 new Text("${article.commentsCount} comments"),
+                 new IconButton(
+                   icon: new Icon(Icons.launch),
+                   color: Colors.grey[500],
+                     onPressed: () async{
+                       final fakeUrl = "https://${article.domain}";
+                        if(await canLaunch(fakeUrl)){
+                           launch(fakeUrl);
+                        }
+                     },
+                 )
+               ],
+             ),
+          ],
+      ),
+    );
+
   }
 }
